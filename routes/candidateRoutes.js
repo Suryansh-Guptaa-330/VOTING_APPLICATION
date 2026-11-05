@@ -17,7 +17,7 @@ const checkAdminRole = async (userID) => {
 // 1. GET: List of all candidates (public)
 router.get('/', async (req, res) => {
     try {
-        const candidates = await Candidate.find({}, 'name party -_id');
+        const candidates = await Candidate.find({}, 'name party age voteCount _id');
         res.status(200).json(candidates);
     } catch (err) {
         console.error(err);
@@ -33,8 +33,11 @@ router.get('/vote/count', async (req, res) => {
 
         const voteRecord = candidates.map((data) => {
             return {
+                id: data._id,
+                name: data.name,
                 party: data.party,
-                count: data.voteCount
+                count: data.voteCount,
+                age: data.age
             };
         });
         return res.status(200).json(voteRecord);
@@ -97,7 +100,7 @@ router.delete('/:candidateID', jwtAuthMiddleware, async (req, res) => {
         }
 
         const candidateId = req.params.candidateID;
-        const response = await Candidate.findByIdAndDelete(candidateID);
+        const response = await Candidate.findByIdAndDelete(candidateId);
 
         if (!response) {
             return res.status(404).json({ error: 'Candidate not found' });
@@ -140,7 +143,7 @@ router.post('/vote/:candidateID', jwtAuthMiddleware, async (req, res) => {
         // await candidate.save();
 
         //atomic updates because of concurrency issue in voting so we use this 
-       await Candidate.findByIdAndUpdate(candidateId, {
+       await Candidate.findByIdAndUpdate(candidateID, {
     $inc: { voteCount: 1 },
     $push: { votes: { user: userId } }
 });

@@ -1,9 +1,16 @@
 # Dependencies
 node_modules/
+client/node_modules/
+
+# Production build
+dist/
+client/dist/
+dist-ssr/
 
 # Environment and sensitive variables
 .env
 .env.*
+*.local
 
 # Logs
 npm-debug.log*

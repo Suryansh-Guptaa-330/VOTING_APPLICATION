@@ -101,7 +101,7 @@ router.put('/profile/password',jwtAuthMiddleware, async (req, res)=>{
         const user = await User.findById(userId);
 
         //If user doesn't exist or incorrect password
-         if( !(await user.comparePassword(password))){
+        if( !(await user.comparePassword(currentPassword))){
             return res.status(401).json({error: 'Invalid username or password'});
         }
 
