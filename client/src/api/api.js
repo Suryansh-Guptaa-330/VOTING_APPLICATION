@@ -1,7 +1,14 @@
 import axios from 'axios';
 
-// Backend server URL (verified from ../VOTING_APP/.env & server.js)
-const BASE_URL = 'http://localhost:3000';
+// Backend server URL: Uses environment variable for Vercel/Render deployment,
+// falling back to local port 3000 for local development.
+const rawBaseUrl =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_BACKEND_URL ||
+  'http://localhost:3000';
+
+// Strip any trailing slash to prevent malformed endpoint paths (e.g. //user/login)
+const BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 /**
  * Custom Axios instance for VoteChain application
@@ -11,7 +18,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 60000, // 60s timeout to handle Render free-tier spinning up from cold starts
 });
 
 /**
